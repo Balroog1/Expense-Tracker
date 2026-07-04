@@ -18,13 +18,31 @@ def display_menu():
     print("3. Generate Report")
     print("4. Exit")
 
+def get_valid_amount():
+    """Ask the user for a valid expense amount."""
+
+    while True:
+
+        try:
+
+            amount = float(input("Amount: "))
+
+            if amount <= 0:
+                print("Amount must be greater than zero.\n")
+                continue
+
+            return amount
+
+        except ValueError:
+            print("Invalid amount. Please enter a number.\n")
+
 
 def add_expense():
     """Collect expense details from the user."""
 
     print("\n----- Add Expense -----")
 
-    amount = input("Amount: ")
+    amount = get_valid_amount()
     category = input("Category: ")
     description = input("Description: ")
     payment_method = input("Payment Method: ")
