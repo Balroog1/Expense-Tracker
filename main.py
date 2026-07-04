@@ -5,6 +5,7 @@ Version: 0.3
 Author: Abhinav
 """
 
+expenses = []
 
 def display_menu():
     """Display the main menu."""
@@ -47,6 +48,14 @@ def add_expense():
     description = input("Description: ")
     payment_method = input("Payment Method: ")
 
+    expense = {
+    "amount": amount,
+    "category": category,
+    "description": description,
+    "payment_method": payment_method
+    }
+    expenses.append(expense)
+
     print("\nExpense Added Successfully!")
 
     print("\nExpense Details")
@@ -56,27 +65,48 @@ def add_expense():
     print(f"Description     : {description}")
     print(f"Payment Method  : {payment_method}")
 
+    print("\nCurrent Expenses:")
+
+    for expense in expenses:
+        print(expense)
+
 
 def main():
 
-    display_menu()
+    """Main application loop."""
 
-    choice = input("\nEnter your choice: ")
+    while True:
 
-    if choice == "1":
-        add_expense()
+        display_menu()
 
-    elif choice == "2":
-        print("\nView Expense feature coming soon!")
+        choice = input("\nEnter your choice: ")
 
-    elif choice == "3":
-        print("\nGenerate Report feature coming soon!")
+        if choice == "1":
+            add_expense()
 
-    elif choice == "4":
-        print("\nThank you for using Expense Tracker!")
+        elif choice == "2":
+            print("\n----- View Expenses -----")
 
-    else:
-        print("\nInvalid Choice!")
+            if not expenses:
+                print("No expenses found.")
+
+            else:
+                for index, expense in enumerate(expenses, start=1):
+                    print(f"\nExpense {index}")
+                    print(f"Amount          : {expense['amount']}")
+                    print(f"Category        : {expense['category']}")
+                    print(f"Description     : {expense['description']}")
+                    print(f"Payment Method  : {expense['payment_method']}")
+
+        elif choice == "3":
+            print("\nGenerate Report feature coming soon!")
+
+        elif choice == "4":
+            print("\nThank you for using Expense Tracker!")
+            break
+
+        else:
+            print("\nInvalid Choice! Please try again.")
 
 
 main()
