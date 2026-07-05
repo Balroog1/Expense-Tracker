@@ -1,6 +1,6 @@
 """
 Expense Tracker
-Version: 0.3
+Version: 0.5
 
 Author: Abhinav
 """
@@ -70,6 +70,24 @@ def add_expense():
     for expense in expenses:
         print(expense)
 
+def generate_report():
+    """Generate and display an expense summary."""
+
+    if not expenses:
+        print("\nNo expenses found.")
+        return
+
+    print("\n========== Expense Report ==========")
+
+    number_of_expenses = len(expenses)
+    
+    total_expense = 0
+
+    for expense in expenses:
+        total_expense += expense["amount"]
+
+    print(f"Number of Expenses : {number_of_expenses}")
+    print(f"Total Expenses     : {total_expense}")
 
 def main():
 
@@ -99,7 +117,7 @@ def main():
                     print(f"Payment Method  : {expense['payment_method']}")
 
         elif choice == "3":
-            print("\nGenerate Report feature coming soon!")
+            generate_report()
 
         elif choice == "4":
             print("\nThank you for using Expense Tracker!")
