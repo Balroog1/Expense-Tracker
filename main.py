@@ -1,6 +1,6 @@
 """
 Expense Tracker
-Version: 0.5
+Version: 0.6
 
 Author: Abhinav
 """
@@ -82,13 +82,27 @@ def generate_report():
     number_of_expenses = len(expenses)
     
     total_expense = 0
+    highest_expense = expenses[0]["amount"]
+    lowest_expense = expenses[0]["amount"]
 
     for expense in expenses:
         total_expense += expense["amount"]
 
-    print(f"Number of Expenses : {number_of_expenses}")
-    print(f"Total Expenses     : {total_expense}")
+        if expense["amount"] > highest_expense:
+            highest_expense = expense["amount"]
+           
+        if expense["amount"] < lowest_expense:
+            lowest_expense = expense["amount"]
+            
+    average_expense = total_expense / number_of_expenses
 
+    print(f"Number of Expenses : {number_of_expenses}")
+    print(f"Total Expenses     : {total_expense:.2f}")
+    print(f"Highest Expense    : {highest_expense:.2f}") 
+    print(f"Lowest Expense     : {lowest_expense:.2f}")
+    print(f"Average Expense    : {average_expense:.2f}")
+
+    
 def main():
 
     """Main application loop."""
