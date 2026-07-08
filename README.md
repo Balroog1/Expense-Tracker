@@ -1,6 +1,6 @@
-# 💰 Personal Expense Tracker
+# 💰 Expense Tracker (CLI)
 
-A command-line Personal Expense Tracker built with Python.
+A command-line Personal Expense Tracker built with Python that allows users to record, organize, and analyze their daily expenses.
 
 ---
 
@@ -18,6 +18,10 @@ A command-line Personal Expense Tracker built with Python.
   - Highest expense
   - Lowest expense
   - Average expense
+- Category-wise expense analysis
+- Payment method analysis
+- Modular report generation
+- Professional CLI report formatting  
 - In-memory expense storage
 
 ---
@@ -32,19 +36,20 @@ A command-line Personal Expense Tracker built with Python.
 
 ## 📂 Project Structure
 
+```text
 Expense-Tracker/
 │
-├── main.py
-├── README.md
-├── requirements.txt
-└── .gitignore
+├── main.py                # Main application
+├── README.md              # Project documentation
+├── requirements.txt       # Project dependencies
+└── .gitignore             # Git ignored files
 ```
 
 ---
 
 ## 📈 Current Version
 
-**v0.6**
+**v0.7**
 
 ---
 
@@ -57,11 +62,13 @@ Expense-Tracker/
 - Input validation
 - View expenses
 - Expense summary report
+- Category breakdown
+- Payment method breakdown
+- Improved report formatting
+- Modular report generation
 
 ### 🔜 Upcoming Features
 
-- Category-wise expense summary
-- Payment method summary
 - Currency conversion
 - Save data to CSV
 - Load data from CSV
