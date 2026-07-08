@@ -1,6 +1,6 @@
 """
 Expense Tracker
-Version: 0.6
+Version: 0.7
 
 Author: Abhinav
 """
@@ -70,6 +70,33 @@ def add_expense():
     for expense in expenses:
         print(expense)
 
+def print_statistics(number_of_expenses,
+                     total_expense,
+                     highest_expense,
+                     lowest_expense,
+                     average_expense):
+    """Display general expense statistics."""
+
+    print("\nGeneral Statistics")
+    print("-" * 18)
+
+    print(f"Number of Expenses : {number_of_expenses}")
+    print(f"Total Expenses     : {total_expense:.2f}")
+    print(f"Highest Expense    : {highest_expense:.2f}")
+    print(f"Lowest Expense     : {lowest_expense:.2f}")
+    print(f"Average Expense    : {average_expense:.2f}")
+
+def print_breakdown(title, totals):
+    """Display a formatted breakdown report."""
+
+    print("\n" + "-" * 50)
+    print(title)
+    print("-" * len(title))
+
+    for key, total in totals.items():
+        print(f"{key:<18}: {total:.2f}")
+
+
 def generate_report():
     """Generate and display an expense summary."""
 
@@ -77,13 +104,18 @@ def generate_report():
         print("\nNo expenses found.")
         return
 
-    print("\n========== Expense Report ==========")
+    print("\n" + "=" * 50)
+    print("               EXPENSE REPORT")
+    print("=" * 50)
 
     number_of_expenses = len(expenses)
     
     total_expense = 0
     highest_expense = expenses[0]["amount"]
     lowest_expense = expenses[0]["amount"]
+
+    category_totals = {}
+    payment_totals = {}
 
     for expense in expenses:
         total_expense += expense["amount"]
@@ -93,16 +125,38 @@ def generate_report():
            
         if expense["amount"] < lowest_expense:
             lowest_expense = expense["amount"]
+
+        category = expense["category"]
+        amount = expense["amount"]    
+        payment_method = expense["payment_method"]
+
+        if category in category_totals:
+            category_totals[category] += amount
+        else:
+            category_totals[category] = amount
+
+        if payment_method in payment_totals:
+            payment_totals[payment_method] += amount
+        else:
+            payment_totals[payment_method] = amount    
             
     average_expense = total_expense / number_of_expenses
 
-    print(f"Number of Expenses : {number_of_expenses}")
-    print(f"Total Expenses     : {total_expense:.2f}")
-    print(f"Highest Expense    : {highest_expense:.2f}") 
-    print(f"Lowest Expense     : {lowest_expense:.2f}")
-    print(f"Average Expense    : {average_expense:.2f}")
 
+    print_statistics(
+       number_of_expenses,
+       total_expense,
+       highest_expense,
+       lowest_expense,
+       average_expense
+    )
+
+    print_breakdown("Category Breakdown", category_totals)
     
+    print_breakdown("Payment Method Breakdown", payment_totals)
+   
+    print("\n" + "=" * 50)
+
 def main():
 
     """Main application loop."""
