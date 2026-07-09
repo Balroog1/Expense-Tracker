@@ -21,14 +21,20 @@ A command-line Personal Expense Tracker built with Python that allows users to r
 - Category-wise expense analysis
 - Payment method analysis
 - Modular report generation
-- Professional CLI report formatting  
-- In-memory expense storage
+- Professional CLI report formatting
+- CSV-based persistent storage
+- Automatic CSV creation
+- Automatic loading of saved expenses
+- Automatic saving of new expenses
+- Error handling for corrupted CSV records
+- Startup status messages
 
 ---
 
 ## 🛠 Technologies Used
 
-- Python 3
+- Python 
+- CSV Module
 - Git
 - GitHub
 
@@ -42,14 +48,15 @@ Expense-Tracker/
 ├── main.py                # Main application
 ├── README.md              # Project documentation
 ├── requirements.txt       # Project dependencies
-└── .gitignore             # Git ignored files
+├── .gitignore             # Git ignored files
+└── expenses.csv           # Auto-generated (ignored by Git)
 ```
 
 ---
 
 ## 📈 Current Version
 
-**v0.7**
+**v0.8**
 
 ---
 
@@ -64,18 +71,31 @@ Expense-Tracker/
 - Expense summary report
 - Category breakdown
 - Payment method breakdown
-- Improved report formatting
+- Professional CLI formatting
 - Modular report generation
+- CSV persistence
+- Automatic data loading
+- Automatic data saving
+- CSV initialization
+- Error handling for invalid CSV records
 
 ### 🔜 Upcoming Features
 
-- Currency conversion
-- Save data to CSV
-- Load data from CSV
 - SQLite database integration
+- Edit existing expenses
+- Delete expenses
+- Currency conversion
 - Flask web application
 - Data analysis dashboard
 - AI-powered spending insights
+
+## 🌟 Project Highlights
+
+- Modular and reusable Python functions
+- Persistent storage using CSV files
+- Professional command-line interface
+- Robust error handling
+- Clean and maintainable code structure
 
 ---
 
