@@ -1,10 +1,13 @@
 """
 Expense Tracker
-Version: 0.7
+Version: 0.8
 
 Author: Abhinav
 """
+import csv
+import os
 
+CSV_FILE = "expenses.csv"
 expenses = []
 
 def display_menu():
@@ -56,6 +59,8 @@ def add_expense():
     }
     expenses.append(expense)
 
+    save_expense_to_csv(expense)
+    
     print("\nExpense Added Successfully!")
 
     print("\nExpense Details")
@@ -65,10 +70,24 @@ def add_expense():
     print(f"Description     : {description}")
     print(f"Payment Method  : {payment_method}")
 
-    print("\nCurrent Expenses:")
+def view_expenses():
+    print("\n" + "=" * 50)
+    print("              VIEW EXPENSES")
+    print("=" * 50)
 
-    for expense in expenses:
-        print(expense)
+    if not expenses:
+        print("No expenses found.")
+    else:
+        for index, expense in enumerate(expenses, start=1):
+            print(f"\nExpense #{index}")
+            print("-" * 50)
+            print(f"Amount          : {expense['amount']:.2f}")
+            print(f"Category        : {expense['category']}")
+            print(f"Description     : {expense['description']}")
+            print(f"Payment Method  : {expense['payment_method']}")
+            print()
+
+        print("=" * 50)    
 
 def print_statistics(number_of_expenses,
                      total_expense,
@@ -157,9 +176,86 @@ def generate_report():
    
     print("\n" + "=" * 50)
 
+def initialize_csv():
+    """Create expenses.csv with headers if it does not exist."""
+
+    print("Initializing storage...")
+
+    if not os.path.exists(CSV_FILE):
+
+        with open(CSV_FILE, "w", newline="") as file:
+
+            writer = csv.writer(file)
+
+            writer.writerow([
+                "Amount",
+                "Category",
+                "Description",
+                "Payment Method"
+            ])
+    print("Storage ready.\n")        
+
+def save_expense_to_csv(expense):
+    """Save a single expense to the CSV file."""
+
+    with open(CSV_FILE, "a", newline="") as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow([
+            expense["amount"],
+            expense["category"],
+            expense["description"],
+            expense["payment_method"]
+        ])
+
+def load_expenses_from_csv():
+    """Load all expenses from the CSV file into memory."""
+
+    print("Loading expenses...")
+
+    expenses.clear()
+    invalid_rows = 0
+
+    with open(CSV_FILE, "r", newline="") as file:
+
+        reader = csv.DictReader(file)
+
+        for row in reader:
+
+            try:
+                expense = {
+                    "amount": float(row["Amount"]),
+                    "category": row["Category"],
+                    "description": row["Description"],
+                    "payment_method": row["Payment Method"],
+                }
+
+                expenses.append(expense)
+
+            except (ValueError, KeyError):
+                invalid_rows += 1
+                print("Warning: Skipped an invalid expense record.")
+
+    if expenses:
+        print(f"Loaded {len(expenses)} expense(s).")
+    else:
+        print("No previous expenses found.")
+
+    if invalid_rows > 0:
+        print(f"Warning: Skipped {invalid_rows} invalid record(s).")
+
+    print() 
+
+    
 def main():
 
     """Main application loop."""
+
+    print("\nStarting Expense Tracker...\n")
+    
+    initialize_csv()
+    load_expenses_from_csv()
 
     while True:
 
@@ -171,18 +267,7 @@ def main():
             add_expense()
 
         elif choice == "2":
-            print("\n----- View Expenses -----")
-
-            if not expenses:
-                print("No expenses found.")
-
-            else:
-                for index, expense in enumerate(expenses, start=1):
-                    print(f"\nExpense {index}")
-                    print(f"Amount          : {expense['amount']}")
-                    print(f"Category        : {expense['category']}")
-                    print(f"Description     : {expense['description']}")
-                    print(f"Payment Method  : {expense['payment_method']}")
+            view_expenses()
 
         elif choice == "3":
             generate_report()
