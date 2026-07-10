@@ -4,12 +4,12 @@ Version: 0.9
 
 Author: Abhinav
 """
-import csv
-import os
+
 import sqlite3
 
 DATABASE_FILE = "expenses.db"
-CSV_FILE = "expenses.csv"
+TABLE_NAME = "expenses"
+
 expenses = []
 
 def initialize_database():
@@ -29,6 +29,60 @@ def initialize_database():
     cursor.execute(create_table_query)
     connection.commit()
     connection.close()
+
+def get_database_connection():
+    """Return a connection to the SQLite database."""
+
+    return sqlite3.connect(DATABASE_FILE)
+
+def save_expense_to_database(expense):
+    """Save one expense into the SQLite database."""
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    insert_query = f"""
+    INSERT INTO {TABLE_NAME} (
+        amount,
+        category,
+        description,
+        payment_method
+    )
+    VALUES (?, ?, ?, ?)
+    """
+    cursor.execute(
+        insert_query,
+        (
+            expense["amount"],
+            expense["category"],
+            expense["description"],
+            expense["payment_method"]
+        )
+    )
+    connection.commit()
+    connection.close()
+
+def load_expenses_from_database():
+    """Load all expenses from the SQLite database."""
+    
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    select_query = f"SELECT * FROM {TABLE_NAME}"
+
+    cursor.execute(select_query)
+    rows = cursor.fetchall()
+    expenses.clear()
+    for row in rows:
+        expense = {
+            "amount": row[1],
+            "category": row[2],
+            "description": row[3],
+            "payment_method": row[4]
+        }
+
+        expenses.append(expense)
+    connection.close()    
+    
 
 def display_menu():
     """Display the main menu."""
@@ -79,7 +133,7 @@ def add_expense():
     }
     expenses.append(expense)
 
-    save_expense_to_csv(expense)
+    save_expense_to_database(expense)
     
     print("\nExpense Added Successfully!")
 
@@ -196,77 +250,7 @@ def generate_report():
    
     print("\n" + "=" * 50)
 
-def initialize_csv():
-    """Create expenses.csv with headers if it does not exist."""
-
-    print("Initializing storage...")
-
-    if not os.path.exists(CSV_FILE):
-
-        with open(CSV_FILE, "w", newline="") as file:
-
-            writer = csv.writer(file)
-
-            writer.writerow([
-                "Amount",
-                "Category",
-                "Description",
-                "Payment Method"
-            ])
-    print("Storage ready.\n")        
-
-def save_expense_to_csv(expense):
-    """Save a single expense to the CSV file."""
-
-    with open(CSV_FILE, "a", newline="") as file:
-
-        writer = csv.writer(file)
-
-        writer.writerow([
-            expense["amount"],
-            expense["category"],
-            expense["description"],
-            expense["payment_method"]
-        ])
-
-def load_expenses_from_csv():
-    """Load all expenses from the CSV file into memory."""
-
-    print("Loading expenses...")
-
-    expenses.clear()
-    invalid_rows = 0
-
-    with open(CSV_FILE, "r", newline="") as file:
-
-        reader = csv.DictReader(file)
-
-        for row in reader:
-
-            try:
-                expense = {
-                    "amount": float(row["Amount"]),
-                    "category": row["Category"],
-                    "description": row["Description"],
-                    "payment_method": row["Payment Method"],
-                }
-
-                expenses.append(expense)
-
-            except (ValueError, KeyError):
-                invalid_rows += 1
-                print("Warning: Skipped an invalid expense record.")
-
-    if expenses:
-        print(f"Loaded {len(expenses)} expense(s).")
-    else:
-        print("No previous expenses found.")
-
-    if invalid_rows > 0:
-        print(f"Warning: Skipped {invalid_rows} invalid record(s).")
-
-    print() 
-
+       
     
 def main():
 
@@ -275,8 +259,9 @@ def main():
     print("\nStarting Expense Tracker...\n")
     
     initialize_database()
-    initialize_csv()
-    load_expenses_from_csv()
+    load_expenses_from_database()
+
+    print("Expense database loaded successfully.\n")
 
     while True:
 
