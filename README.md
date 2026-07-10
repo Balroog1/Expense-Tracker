@@ -93,7 +93,7 @@ Expense-Tracker/
 Clone the repository:
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Balroog1/Expense-Tracker.git
 ```
 
 Navigate to the project folder:
