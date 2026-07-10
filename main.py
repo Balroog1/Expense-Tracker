@@ -1,14 +1,34 @@
 """
 Expense Tracker
-Version: 0.8
+Version: 0.9
 
 Author: Abhinav
 """
 import csv
 import os
+import sqlite3
 
+DATABASE_FILE = "expenses.db"
 CSV_FILE = "expenses.csv"
 expenses = []
+
+def initialize_database():
+    """Create the SQLite database if it doesn't exist."""
+
+    connection = sqlite3.connect(DATABASE_FILE)
+    cursor = connection.cursor()
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        amount REAL NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT NOT NULL,
+        payment_method TEXT NOT NULL
+    )
+    """
+    cursor.execute(create_table_query)
+    connection.commit()
+    connection.close()
 
 def display_menu():
     """Display the main menu."""
@@ -254,6 +274,7 @@ def main():
 
     print("\nStarting Expense Tracker...\n")
     
+    initialize_database()
     initialize_csv()
     load_expenses_from_csv()
 
