@@ -74,6 +74,7 @@ def load_expenses_from_database():
     expenses.clear()
     for row in rows:
         expense = {
+            "id": row[0],
             "amount": row[1],
             "category": row[2],
             "description": row[3],
@@ -94,16 +95,21 @@ def display_menu():
     print("\n1. Add Expense")
     print("2. View Expenses")
     print("3. Generate Report")
-    print("4. Exit")
+    print("4. Edit Expense")
+    print("5. Exit")
 
-def get_valid_amount():
+def get_valid_amount(prompt="Amount: ", allow_empty=False):
     """Ask the user for a valid expense amount."""
 
     while True:
 
         try:
 
-            amount = float(input("Amount: "))
+            amount_input = input(prompt)
+            if allow_empty and amount_input == "":
+                return None
+
+            amount = float(amount_input)
 
             if amount <= 0:
                 print("Amount must be greater than zero.\n")
@@ -153,7 +159,7 @@ def view_expenses():
         print("No expenses found.")
     else:
         for index, expense in enumerate(expenses, start=1):
-            print(f"\nExpense #{index}")
+            print(f"\nExpense ID: {expense['id']}")
             print("-" * 50)
             print(f"Amount          : {expense['amount']:.2f}")
             print(f"Category        : {expense['category']}")
@@ -162,6 +168,84 @@ def view_expenses():
             print()
 
         print("=" * 50)    
+
+def edit_expense():
+    """Edit an existing expense."""
+
+    print("\n----- Edit Expense -----")
+
+    expense_id = int(input("Enter Expense ID: "))
+
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    select_query = f"""
+    SELECT *
+    FROM {TABLE_NAME}
+    WHERE id = ?
+    """
+    cursor.execute(select_query, (expense_id,))
+    expense = cursor.fetchone()
+
+    if expense is None:
+        print("\nExpense not found.")
+        connection.close()
+        return
+    
+    current_amount = expense[1]
+    current_category = expense[2]
+    current_description = expense[3]
+    current_payment_method = expense[4]
+
+    print("\nEnter new expense details:")
+
+    print(f"\nCurrent Amount: {current_amount}")
+    new_amount = get_valid_amount("New Amount (press Enter to keep current): ",allow_empty=True)
+    if new_amount is None:
+        new_amount = current_amount
+
+    print(f"\nCurrent Category: {current_category}")
+    new_category = input("New Category (press Enter to keep current): ")
+    if new_category == "":
+        new_category = current_category
+
+    print(f"\nCurrent Description: {current_description}")
+    new_description = input("New Description (press Enter to keep current): ")
+    if new_description == "":
+        new_description = current_description
+
+    print(f"\nCurrent Payment Method: {current_payment_method}")
+    new_payment_method = input("New Payment Method (press Enter to keep current): ")
+    if new_payment_method == "":
+        new_payment_method = current_payment_method
+
+    update_query = f"""
+    UPDATE {TABLE_NAME}
+    SET
+        amount = ?,
+        category = ?,
+        description = ?,
+        payment_method = ?
+    WHERE id = ?
+    """
+
+    cursor.execute(
+        update_query,
+        (
+            new_amount,
+            new_category,
+            new_description,
+            new_payment_method,
+            expense_id
+        )
+    )
+
+    connection.commit()
+    load_expenses_from_database()
+    connection.close()
+
+    print("\nExpense updated successfully!")
+
 
 def print_statistics(number_of_expenses,
                      total_expense,
@@ -279,6 +363,9 @@ def main():
             generate_report()
 
         elif choice == "4":
+            edit_expense()
+           
+        elif choice == "5":
             print("\nThank you for using Expense Tracker!")
             break
 
