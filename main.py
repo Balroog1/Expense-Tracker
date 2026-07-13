@@ -96,7 +96,8 @@ def display_menu():
     print("2. View Expenses")
     print("3. Generate Report")
     print("4. Edit Expense")
-    print("5. Exit")
+    print("5. Delete Expense")
+    print("6. Exit")
 
 def get_valid_amount(prompt="Amount: ", allow_empty=False):
     """Ask the user for a valid expense amount."""
@@ -246,6 +247,58 @@ def edit_expense():
 
     print("\nExpense updated successfully!")
 
+def delete_expense():
+    """Delete an existing expense."""
+
+    print("\n----- Delete Expense -----")
+
+    expense_id = int(input("Enter Expense ID: "))
+
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    select_query = f"""
+    SELECT *
+    FROM {TABLE_NAME}
+    WHERE id = ?
+    """
+    cursor.execute(select_query, (expense_id,))
+    expense = cursor.fetchone()
+    if expense is None:
+        print("\nExpense not found.")
+        connection.close()
+        return
+    
+    print("\nExpense to be deleted:")
+
+    print(f"ID             : {expense[0]}")
+    print(f"Amount         : {expense[1]:.2f}")
+    print(f"Category       : {expense[2]}")
+    print(f"Description    : {expense[3]}")
+    print(f"Payment Method : {expense[4]}")
+
+    while True:
+        confirmation = input("\nAre you sure you want to delete this expense? (Y/N): ").lower()
+
+        if confirmation in ("y", "n"):
+            break
+        print("Invalid input. Please enter Y or N.")
+    
+    if confirmation == "n":
+        print("\nDeletion cancelled.")
+        connection.close()
+        return
+    
+    delete_query = f"""
+    DELETE FROM {TABLE_NAME}
+    WHERE id = ?
+    """
+    cursor.execute(delete_query, (expense_id,))
+    connection.commit()
+    load_expenses_from_database()
+    connection.close()
+
+    print("\nExpense deleted successfully!")
 
 def print_statistics(number_of_expenses,
                      total_expense,
@@ -366,7 +419,11 @@ def main():
             edit_expense()
            
         elif choice == "5":
-            print("\nThank you for using Expense Tracker!")
+            delete_expense()
+            
+
+        elif choice == "6":
+            print("\nExiting Expense Tracker. Goodbye!")
             break
 
         else:
