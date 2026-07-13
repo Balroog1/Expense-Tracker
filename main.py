@@ -138,9 +138,9 @@ def add_expense():
     "description": description,
     "payment_method": payment_method
     }
-    expenses.append(expense)
 
     save_expense_to_database(expense)
+    load_expenses_from_database()
     
     print("\nExpense Added Successfully!")
 
